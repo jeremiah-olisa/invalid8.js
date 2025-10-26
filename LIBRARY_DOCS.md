@@ -30,7 +30,7 @@ Invalid8 is a sophisticated, high-performance caching library for JavaScript/Typ
 
 ## Technical Requirements
 
-- **Language**: TypeScript/JavaScript (ES Modules, Node.js 16+ compatible).
+- **Language**: TypeScript/JavaScript (ES Modules, Node.js 18+ compatible).
 - **Cache Backends**: In-memory (default), Redis (optional via `@invalid8/redis-adapter`), or custom cache providers.
 - **Event Bus**: Support for event buses like Redis Pub/Sub or custom implementations.
 - **Dependencies**: Minimal core dependencies; optional adapters installed separately to avoid vendor lock-in.
