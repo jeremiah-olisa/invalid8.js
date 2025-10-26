@@ -27,8 +27,8 @@ const eventBus = new RabbitMQEventBus({
   options: {
     url: 'amqp://localhost',
     exchange: 'events',
-    exchangeType: 'topic'
-  }
+    exchangeType: 'topic',
+  },
 });
 await eventBus.connect();
 
@@ -42,7 +42,7 @@ await eventBus.publish({
   id: '1',
   type: 'user.created',
   data: { userId: '123' },
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 ```
 

@@ -27,8 +27,8 @@ const eventBus = new KafkaEventBus({
   options: {
     brokers: ['localhost:9092'],
     clientId: 'my-app',
-    groupId: 'my-group'
-  }
+    groupId: 'my-group',
+  },
 });
 await eventBus.connect();
 
@@ -42,7 +42,7 @@ await eventBus.publish({
   id: '1',
   type: 'user.created',
   data: { userId: '123' },
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 ```
 
