@@ -2,6 +2,12 @@
 
 A monorepo containing the Invalid8 caching library and EventBus system with multiple adapters for distributed caching and event-driven architectures.
 
+## 📖 Documentation
+
+- **[Library Documentation](./LIBRARY_DOCS.md)** - Comprehensive guide to using Invalid8 caching library
+- **[Contributing Guide](./CONTRIBUTING.md)** - How to contribute to this project
+- **[Core Package](./core/README.md)** - @invalid8/core documentation
+
 ## 📦 Packages
 
 ### Core Packages
