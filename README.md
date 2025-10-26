@@ -11,14 +11,17 @@ A monorepo containing the Invalid8 caching library and EventBus system with mult
 ## 📦 Packages
 
 ### Core Packages
+
 - **[@invalid8/core](./core)** - Core caching library with React Query-like DX
 - **[@eventbus/core](./event/core)** - Event bus system for distributed cache invalidation
 
 ### Cache Adapters
+
 - **[@invalid8/memory](./cache/memory)** - In-memory cache adapter
 - **[@invalid8/redis](./cache/redis)** - Redis cache adapter
 
 ### Event Bus Adapters
+
 - **[@eventbus/memory](./event/memory)** - In-memory event bus adapter
 - **[@eventbus/kafka](./event/kafka)** - Kafka event bus adapter
 - **[@eventbus/rabbitmq](./event/rabbitmq)** - RabbitMQ event bus adapter
@@ -26,6 +29,7 @@ A monorepo containing the Invalid8 caching library and EventBus system with mult
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js >= 18.0.0
 - pnpm >= 8.0.0
 
@@ -167,6 +171,7 @@ invalid8.js/
 Packages use `workspace:*` protocol for internal dependencies, which pnpm resolves to linked packages during development and actual versions during publishing.
 
 Example:
+
 ```json
 {
   "dependencies": {
@@ -199,4 +204,4 @@ MIT License - see individual packages for details
 
 ---
 
-*Built with ❤️ by Jeremiah Olisa*
+_Built with ❤️ by Jeremiah Olisa_

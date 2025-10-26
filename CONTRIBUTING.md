@@ -24,17 +24,20 @@ Thank you for your interest in contributing to Invalid8.js! This document provid
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/invalid8.js.git
    cd invalid8.js
    ```
 
 3. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 4. Build all packages:
+
    ```bash
    pnpm run build
    ```
@@ -98,6 +101,7 @@ invalid8.js/
 ```
 
 Each package follows this structure:
+
 ```
 package/
 ├── src/
@@ -134,6 +138,7 @@ pnpm run lint
 ```
 
 Key style points:
+
 - Use single quotes for strings
 - Use 2 spaces for indentation
 - Add trailing commas in objects and arrays
@@ -177,6 +182,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) specifica
 ### Scope
 
 The scope should be the name of the package affected:
+
 - `core`
 - `memory`
 - `redis`
@@ -196,12 +202,14 @@ test(eventbus): add tests for event subscription
 ## Pull Request Process
 
 1. **Update your fork**:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
    ```
 
 2. **Push your changes**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -216,6 +224,7 @@ test(eventbus): add tests for event subscription
    - No merge conflicts
 
 5. **PR Title**: Follow conventional commit format
+
    ```
    feat(core): add support for distributed cache invalidation
    ```
@@ -252,15 +261,16 @@ pnpm --filter @invalid8/core run test:watch
 - Use descriptive test names
 
 Example:
+
 ```typescript
 describe('QueryClient', () => {
   it('should cache query results', async () => {
     // Arrange
     const client = new QueryClient(mockAdapter);
-    
+
     // Act
     const result = await client.queryAsync(['key'], fetchData);
-    
+
     // Assert
     expect(result).toBeDefined();
   });
@@ -276,15 +286,16 @@ describe('QueryClient', () => {
 - Include usage examples for complex features
 
 Example:
-```typescript
+
+````typescript
 /**
  * Executes a query with caching support.
- * 
+ *
  * @param key - Cache key as an array of strings
  * @param queryFn - Function to fetch data if cache miss
  * @param options - Optional query configuration
  * @returns Promise resolving to cached or fresh data
- * 
+ *
  * @example
  * ```typescript
  * const user = await client.queryAsync(
@@ -299,11 +310,12 @@ async queryAsync<T>(
   queryFn: () => Promise<T>,
   options?: QueryOptions
 ): Promise<T>
-```
+````
 
 ### Package README
 
 Each package should have a comprehensive README with:
+
 - Description and purpose
 - Installation instructions
 - Usage examples
@@ -313,6 +325,7 @@ Each package should have a comprehensive README with:
 ### Main README
 
 Update the main README if you:
+
 - Add a new package
 - Change the project structure
 - Add new features that affect the overall project
@@ -320,6 +333,7 @@ Update the main README if you:
 ## Questions?
 
 If you have questions or need help:
+
 - Open an issue for discussion
 - Join our community discussions
 - Check existing documentation
