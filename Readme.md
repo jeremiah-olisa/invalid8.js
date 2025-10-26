@@ -5,6 +5,7 @@
 Invalid8 is a sophisticated, high-performance caching library for JavaScript/TypeScript applications, designed for modern distributed systems and CQRS architectures. It provides intelligent query caching with configurable stale/expiration times, automatic cache invalidation for mutations, distributed cache synchronization via event bus, and resilient retry mechanisms. Built with TypeScript, it offers type-safe caching solutions and avoids vendor lock-in by supporting pluggable cache adapters.
 
 **Key Features:**
+
 - 🚀 **React Query-like DX** for JavaScript with familiar patterns
 - 🌐 **Distributed cache synchronization** across multiple instances
 - ⚡ **High performance** with minimal overhead
@@ -92,65 +93,76 @@ sequenceDiagram
 ### Core Methods
 
 #### `queryAsync<T>(key: string[], queryFunc: () => Promise<T>, options?: QueryOptions): Promise<T>`
+
 **Purpose**: Execute a query with caching support.
 
 **Parameters**:
+
 - `key`: Array representing the cache key (e.g., `["users", "id123"]`).
 - `queryFunc`: Async function to fetch data if not in cache.
 - `options`: Cache configuration (stale time, cache time, etc.).
 
 **Flow**:
+
 1. Checks cache first.
 2. Returns cached data if valid.
 3. Fetches fresh data if cache miss/stale.
 4. Updates cache in background if stale.
 
 #### `mutateAsync<T>(mutationFunc: () => Promise<T>, options?: MutationOptions): Promise<T>`
+
 **Purpose**: Execute a mutation with automatic cache invalidation.
 
 **Parameters**:
+
 - `mutationFunc`: Async mutation operation.
 - `options`: Invalidation configuration.
 
 **Flow**:
+
 1. Executes mutation.
 2. Invalidates specified cache keys.
 3. Publishes invalidation events to distributed cache.
 
 #### `setQueryDataAsync<T>(key: string[], data: T, options?: CacheEntryOptions): Promise<void>`
+
 **Purpose**: Manually update cache data (optimistic updates).
 
 #### `updateQueryDataAsync<T>(key: string[], updateFunction: (current: T | null) => T, options?: CacheEntryOptions): Promise<void>`
+
 **Purpose**: Transform existing cache data.
 
 ### Configuration Options
 
 #### `QueryOptions`
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| staleTime | number | 300000 | Time (ms) before data is considered stale |
-| cacheTime | number | 1800000 | Time (ms) before data expires |
-| retryCount | number | 3 | Number of retry attempts |
-| retryDelay | number | 1000 | Delay (ms) between retries |
-| enableBackgroundRefetch | boolean | true | Whether to refresh stale data in background |
-| tags | string[] | [] | Tags for categorical invalidation |
+
+| Property                | Type     | Default | Description                                 |
+| ----------------------- | -------- | ------- | ------------------------------------------- |
+| staleTime               | number   | 300000  | Time (ms) before data is considered stale   |
+| cacheTime               | number   | 1800000 | Time (ms) before data expires               |
+| retryCount              | number   | 3       | Number of retry attempts                    |
+| retryDelay              | number   | 1000    | Delay (ms) between retries                  |
+| enableBackgroundRefetch | boolean  | true    | Whether to refresh stale data in background |
+| tags                    | string[] | []      | Tags for categorical invalidation           |
 
 #### `MutationOptions`
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| invalidateQueries | string[][] | [] | Array of keys to invalidate |
-| publishEvent | boolean | true | Whether to publish invalidation events |
-| retryCount | number | 3 | Number of retry attempts |
-| timeout | number | null | Operation timeout (ms) |
+
+| Property          | Type       | Default | Description                            |
+| ----------------- | ---------- | ------- | -------------------------------------- |
+| invalidateQueries | string[][] | []      | Array of keys to invalidate            |
+| publishEvent      | boolean    | true    | Whether to publish invalidation events |
+| retryCount        | number     | 3       | Number of retry attempts               |
+| timeout           | number     | null    | Operation timeout (ms)                 |
 
 #### `OptimisticMutationOptions<T>`
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| queryKeys | string[][] | Required | Keys to update optimistically |
-| optimisticData | () => T | Required | Function to compute optimistic data |
-| onSuccess | (result: T) => T | null | Transform result after success |
-| rollbackOnError | boolean | true | Whether to rollback on error |
-| onError | (error: Error) => void | null | Custom error handler |
+
+| Property        | Type                   | Default  | Description                         |
+| --------------- | ---------------------- | -------- | ----------------------------------- |
+| queryKeys       | string[][]             | Required | Keys to update optimistically       |
+| optimisticData  | () => T                | Required | Function to compute optimistic data |
+| onSuccess       | (result: T) => T       | null     | Transform result after success      |
+| rollbackOnError | boolean                | true     | Whether to rollback on error        |
+| onError         | (error: Error) => void | null     | Custom error handler                |
 
 ## CQRS Implementation Guide
 
@@ -205,16 +217,13 @@ class UpdateUserCommandHandler {
   ) {}
 
   async handle(command: UpdateUserCommand): Promise<void> {
-    await this.queryClient.mutateAsync(
-      () => this.userRepository.updateUserAsync(command),
-      {
-        invalidateQueries: [
-          ['users', command.id],
-          ['users', 'list'],
-          ['dashboard', 'stats'],
-        ],
-      },
-    );
+    await this.queryClient.mutateAsync(() => this.userRepository.updateUserAsync(command), {
+      invalidateQueries: [
+        ['users', command.id],
+        ['users', 'list'],
+        ['dashboard', 'stats'],
+      ],
+    });
   }
 }
 ```
@@ -240,15 +249,12 @@ class TodoService {
   ) {}
 
   async completeTodoAsync(todoId: number): Promise<Todo> {
-    return await this.queryClient.mutateAsync(
-      () => this.api.completeTodoAsync(todoId),
-      {
-        queryKeys: [['todos', todoId.toString()]],
-        optimisticData: () => ({ id: todoId, completed: true, title: 'Loading...' }),
-        onSuccess: (result) => ({ ...result, updatedAt: new Date() }),
-        rollbackOnError: true,
-      },
-    );
+    return await this.queryClient.mutateAsync(() => this.api.completeTodoAsync(todoId), {
+      queryKeys: [['todos', todoId.toString()]],
+      optimisticData: () => ({ id: todoId, completed: true, title: 'Loading...' }),
+      onSuccess: (result) => ({ ...result, updatedAt: new Date() }),
+      rollbackOnError: true,
+    });
   }
 }
 ```
@@ -259,13 +265,10 @@ class TodoService {
 import { QueryClient, EventProvider } from '@invalid8/core';
 
 // Service A (updates data)
-await queryClient.mutateAsync(
-  () => serviceA.updateOrderAsync(order),
-  {
-    invalidateQueries: [['orders', order.id]],
-    publishEvent: true,
-  },
-);
+await queryClient.mutateAsync(() => serviceA.updateOrderAsync(order), {
+  invalidateQueries: [['orders', order.id]],
+  publishEvent: true,
+});
 
 // Service B (automatically receives invalidation)
 await eventProvider.subscribeToInvalidations(async (invalidationEvent) => {
@@ -425,13 +428,17 @@ const invalid8 = new Invalid8({
 ## Advanced Features
 
 ### 1. Background Refresh
+
 When data becomes stale but isn't expired:
+
 1. Returns stale data immediately.
 2. Asynchronously refreshes data in the background.
 3. Updates cache for subsequent requests.
 
 ### 2. Resilient Retries
+
 Automatic retry mechanism for:
+
 - Cache operations
 - Query executions
 - Event publishing
@@ -459,13 +466,9 @@ sequenceDiagram
 import { QueryClient } from '@invalid8/core';
 
 // Cache with tags
-await queryClient.setQueryDataAsync(
-  ['users', '123'],
-  user,
-  {
-    tags: ['department:finance', 'region:us'],
-  },
-);
+await queryClient.setQueryDataAsync(['users', '123'], user, {
+  tags: ['department:finance', 'region:us'],
+});
 
 // Invalidate by tag
 await queryClient.invalidateByTagAsync('department:finance');
@@ -474,6 +477,7 @@ await queryClient.invalidateByTagAsync('department:finance');
 ## Best Practices
 
 ### 1. Key Design
+
 - Use consistent key structures (e.g., `["entity-type", "id"]`).
 - For lists, use prefix keys (e.g., `["users", "list"]`).
 - Include domain context in keys (e.g., `["tenant:123", "users", "456"]`).
@@ -518,21 +522,21 @@ class CacheMetrics {
 
 ## Performance Characteristics
 
-| Operation | Average Latency | Notes |
-|-----------|-----------------|-------|
-| Cache Hit | 1-5ms | Depends on cache provider |
-| Cache Miss | Query latency + 5-10ms | Includes cache population |
-| Mutation | Query latency + 10-20ms | Includes invalidation overhead |
-| Distributed Invalidation | 50-100ms | Network latency dependent |
+| Operation                | Average Latency         | Notes                          |
+| ------------------------ | ----------------------- | ------------------------------ |
+| Cache Hit                | 1-5ms                   | Depends on cache provider      |
+| Cache Miss               | Query latency + 5-10ms  | Includes cache population      |
+| Mutation                 | Query latency + 10-20ms | Includes invalidation overhead |
+| Distributed Invalidation | 50-100ms                | Network latency dependent      |
 
 ## Troubleshooting
 
-| Symptom | Possible Cause | Solution |
-|---------|---------------|----------|
-| Stale data returned | Background refresh failed | Check logs for refresh errors |
-| Cache not invalidating | Event bus issues | Verify event provider connectivity |
-| High memory usage | Cache size too large | Implement eviction policies |
-| Distributed cache out of sync | Network partitions | Check event bus connectivity |
+| Symptom                       | Possible Cause            | Solution                           |
+| ----------------------------- | ------------------------- | ---------------------------------- |
+| Stale data returned           | Background refresh failed | Check logs for refresh errors      |
+| Cache not invalidating        | Event bus issues          | Verify event provider connectivity |
+| High memory usage             | Cache size too large      | Implement eviction policies        |
+| Distributed cache out of sync | Network partitions        | Check event bus connectivity       |
 
 ## Migration Guide
 
@@ -552,10 +556,7 @@ async function getUserAsync(id: number): Promise<User> {
 
 // AFTER: Invalid8 automated caching
 async function getUserAsync(id: number): Promise<User> {
-  return await queryClient.queryAsync(
-    ['users', id.toString()],
-    () => db.users.find(id),
-  );
+  return await queryClient.queryAsync(['users', id.toString()], () => db.users.find(id));
 }
 ```
 
@@ -573,9 +574,8 @@ export class UserController {
 
   @Get(':id')
   async getUser(@Param('id') userId: string) {
-    return await this.queryClient.queryAsync(
-      ['users', userId],
-      () => userService.getUserAsync(userId),
+    return await this.queryClient.queryAsync(['users', userId], () =>
+      userService.getUserAsync(userId),
     );
   }
 }
@@ -602,15 +602,12 @@ class TodoService {
   ) {}
 
   async completeTodoAsync(todoId: number): Promise<Todo> {
-    return await this.queryClient.mutateAsync(
-      () => this.api.completeTodoAsync(todoId),
-      {
-        queryKeys: [['todos', todoId.toString()]],
-        optimisticData: () => ({ id: todoId, completed: true, title: 'Loading...' }),
-        onSuccess: (updatedTodo) => ({ ...updatedTodo, updatedAt: new Date() }),
-        rollbackOnError: true,
-      },
-    );
+    return await this.queryClient.mutateAsync(() => this.api.completeTodoAsync(todoId), {
+      queryKeys: [['todos', todoId.toString()]],
+      optimisticData: () => ({ id: todoId, completed: true, title: 'Loading...' }),
+      onSuccess: (updatedTodo) => ({ ...updatedTodo, updatedAt: new Date() }),
+      rollbackOnError: true,
+    });
   }
 }
 ```
@@ -627,4 +624,4 @@ MIT License - feel free to use in commercial projects.
 
 ---
 
-*Invalid8 - Intelligent Caching for Modern JavaScript/TypeScript Applications*
+_Invalid8 - Intelligent Caching for Modern JavaScript/TypeScript Applications_

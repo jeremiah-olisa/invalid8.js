@@ -27,8 +27,8 @@ const cacheAdapter = new RedisCacheAdapter({
   adapter: 'redis',
   options: {
     host: 'localhost',
-    port: 6379
-  }
+    port: 6379,
+  },
 });
 await cacheAdapter.connect();
 

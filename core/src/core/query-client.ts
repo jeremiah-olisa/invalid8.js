@@ -15,11 +15,7 @@ export class QueryClient implements IQueryClient {
     this.defaultStaleTime = options?.staleTime ?? 0;
   }
 
-  async query<T>(
-    key: CacheKey,
-    fetcher: () => Promise<T>,
-    options?: QueryOptions<T>,
-  ): Promise<T> {
+  async query<T>(key: CacheKey, fetcher: () => Promise<T>, options?: QueryOptions<T>): Promise<T> {
     const cacheKey = this.serializeKey(key);
     const cached = await this.adapter.get<T>(cacheKey);
 
@@ -47,7 +43,7 @@ export class QueryClient implements IQueryClient {
     }
   }
 
-  async invalidate(key: CacheKey, options?: InvalidationOptions): Promise<void> {
+  async invalidate(key: CacheKey, _options?: InvalidationOptions): Promise<void> {
     const cacheKey = this.serializeKey(key);
     await this.adapter.delete(cacheKey);
   }

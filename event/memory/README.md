@@ -35,7 +35,7 @@ await eventBus.publish({
   id: '1',
   type: 'user.created',
   data: { userId: '123' },
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 ```
 
